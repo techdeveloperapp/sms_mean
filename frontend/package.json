@@ -1,7 +1,7 @@
 {
   "name": "school-dashoboard",
   "version": "3.2.0",
-  "homepage": ".",
+  "homepage": "https://smserp.prekshaeyeyoga.com",
   "private": true,
   "dependencies": {
     "@coreui/chartjs": "^2.0.0",

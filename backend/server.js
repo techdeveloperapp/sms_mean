@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const http = require('http');
+const https = require('https');
 dotenv.config();
 
 const ActivityRoutes = require("./routes/ActivityRoutes");
@@ -48,7 +50,9 @@ const path = require("path");
 //const __dirname = path.resolve(path.dirname(""));
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const HTTP_PORT = 8000;
+const HTTPS_PORT = process.env.PORT || 5000;
+
 
 app.use(
   bodyParser.json({
@@ -118,6 +122,12 @@ app.use("/api/deductions", DeductionsRoutes);
 app.use("/api/nonbillpayment", NonPaymentRoutes);
 
 
-app.listen(PORT, () => {
-  return console.log(`listening on port ${PORT}`);
-});
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(HTTP_PORT);
+httpsServer.listen(HTTPS_PORT);
+
+// app.listen(PORT, () => {
+//   return console.log(`listening on port ${PORT}`);
+// });

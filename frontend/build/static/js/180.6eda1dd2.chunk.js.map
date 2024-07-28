@@ -1,0 +1,1 @@
+{"version":3,"sources":["AdminComponents/store/reports/Reports.js"],"names":["Reports","_jsx","children"],"mappings":"iIAAA,wBAMeA,UAJf,WACE,OAAOC,cAAA,OAAAC,SAAK,WACd,C","file":"static/js/180.6eda1dd2.chunk.js","sourcesContent":["import React from \"react\";\n\nfunction Reports() {\n  return <div>Reports</div>;\n}\n\nexport default Reports;\n"],"sourceRoot":""}

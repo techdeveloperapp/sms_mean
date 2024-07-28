@@ -90,7 +90,7 @@ app.use("/api/correspondance", CorrespondanceRoutes);
 app.use("/api/yeargroup", YearGroupRoutes);
 app.use("/api/dormitories", DormitoriesRoutes);
 app.use("/api/notes", FilesRoutes);
-app.use("/api/nextofkin", NextofKinRoutes);
+app.use("/api/nextofkin", NextofkinRoutes);
 app.use("/api/notification", NotificationRoutes);
 app.use("/api/tasks", TaskRoutes);
 app.use("/api/transactions", Transactions);

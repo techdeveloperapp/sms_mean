@@ -426,6 +426,10 @@ const ManageUsers = React.lazy(() =>
   import("../../AdminComponents/users/ManageUsers")
 );
 
+const VideoStreem = React.lazy(() =>
+  import("../../AdminComponents/streem/VideoStreem")
+);
+
 const routes = [
   {
     path: "/",
@@ -1087,6 +1091,11 @@ const routes = [
     name: "Acoount Settings",
     component: Settings,
   },
+  {
+    path: "/vstreem",
+    name: "Video Streem",
+    component: VideoStreem
+  }
 ];
 
 export default routes;

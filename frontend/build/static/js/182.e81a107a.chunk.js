@@ -1,0 +1,2 @@
+(this["webpackJsonpschool-dashoboard"]=this["webpackJsonpschool-dashoboard"]||[]).push([[182],{1423:function(o,s,t){"use strict";t.r(s);t(0);var a=t(10);s.default=function(){return Object(a.jsx)("div",{children:"payment"})}}}]);
+//# sourceMappingURL=182.e81a107a.chunk.js.map

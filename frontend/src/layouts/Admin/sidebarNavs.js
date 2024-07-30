@@ -423,6 +423,17 @@ const _nav = [
       />
     ),
   },
+  {
+    _tag: "CSidebarNavItem",
+    name: "Video Streem",
+    to: "/vstreem",
+    icon: (
+      <CIcon
+        name="cil-settings"
+        customClasses="c-sidebar-nav-icon sidebarIcon"
+      />
+    ),
+  },
 ];
 
 export default _nav;

@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const socketIo = require('socket.io');
 dotenv.config();
 
 const ActivityRoutes = require("./routes/ActivityRoutes");
@@ -131,8 +132,24 @@ var credentials = {
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 
+
+// Socket
+const io = socketIo(httpsServer);
+io.on('connection', (socket) => {
+  socket.on('signal', (data) => {
+    io.to(data.to).emit('signal', data);
+  });
+
+  socket.on('join', (room) => {
+    socket.join(room);
+    io.to(room).emit('joined', socket.id);
+  });
+});
+
+
 httpServer.listen(HTTP_PORT);
 httpsServer.listen(HTTPS_PORT);
+
 
 // app.listen(PORT, () => {
 //   return console.log(`listening on port ${PORT}`);

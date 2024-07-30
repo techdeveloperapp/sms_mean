@@ -1,0 +1,1 @@
+{"version":3,"sources":["AdminComponents/store/store/Store.js"],"names":["Store","_jsx","children"],"mappings":"iIAAA,wBAMeA,UAJf,WACE,OAAOC,cAAA,OAAAC,SAAK,SACd,C","file":"static/js/185.e24d7d6b.chunk.js","sourcesContent":["import React from \"react\";\n\nfunction Store() {\n  return <div>Store</div>;\n}\n\nexport default Store;\n"],"sourceRoot":""}

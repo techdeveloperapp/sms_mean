@@ -11,9 +11,10 @@ function VideoStreem() {
 
   const [stream, setStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
-  const localVideoRef = useRef();
-  const remoteVideoRef = useRef();
-  const peerRef = useRef();
+  const [peerConnection, setPeerConnection] = useState(null);
+  const socket = useRef(null);
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
 
 
 
@@ -81,49 +82,65 @@ function VideoStreem() {
 
   useEffect(() => {
     setloadingData(true);
-    async function getUserMedia() {
-        const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setStream(localStream);
-        localVideoRef.current.srcObject = localStream;
+    socket.current = io('https://toupgradeonlineapi.prekshaeyeyoga.com:8080');
+    const pc = new RTCPeerConnection({
+      iceServers: [
+        {
+          urls: 'stun:stun.l.google.com:19302',
+        },
+      ],
+    });
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.current.emit('candidate', event.candidate);
       }
-      getUserMedia();
-  
-      socket.on('joined', id => {
-        if (socket.id === id) {
-          createPeer(true);
-        } else {
-          createPeer(false);
-        }
-      });
-  
-      socket.on('signal', data => {
-        peerRef.current.signal(data.signal);
-      });
-  
-      socket.emit('join', 'room1');
+    };
+
+    pc.ontrack = (event) => {
+      setRemoteStream(event.streams[0]);
+    };
+
+    setPeerConnection(pc);
+
+    socket.current.on('offer', async (data) => {
+      await pc.setRemoteDescription(new RTCSessionDescription(data));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      socket.current.emit('answer', answer);
+    });
+
+    socket.current.on('answer', async (data) => {
+      await pc.setRemoteDescription(new RTCSessionDescription(data));
+    });
+
+    socket.current.on('candidate', async (data) => {
+      await pc.addIceCandidate(new RTCIceCandidate(data));
+    });
+
+    return () => {
+      socket.current.disconnect();
+    };
   }, []);
 
-  function createPeer(isInitiator) {
-    peerRef.current = new SimplePeer({ initiator: isInitiator, stream, trickle: false });
+  const startVideo = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    setStream(stream);
+    localVideoRef.current.srcObject = stream;
+    stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+  };
 
-    peerRef.current.on('signal', data => {
-      socket.emit('signal', { to: 'room1', signal: data });
-    });
+  const callUser = async () => {
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+    socket.current.emit('offer', offer);
+  };
 
-    peerRef.current.on('stream', remoteStream => {
-      setRemoteStream(remoteStream);
+  useEffect(() => {
+    if (remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
-    });
-  }
-
-  async function startScreenShare() {
-    const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-    const screenTrack = screenStream.getVideoTracks()[0];
-    peerRef.current.replaceTrack(stream.getVideoTracks()[0], screenTrack, stream);
-    screenTrack.onended = () => {
-      peerRef.current.replaceTrack(screenTrack, stream.getVideoTracks()[0], stream);
-    };
-  }
+    }
+  }, [remoteStream]);
 
 //   const handleCheckRole = (e, name) => {
 //     console.log(e, name);
@@ -154,13 +171,13 @@ function VideoStreem() {
             <h1>LLLLL</h1>
         )}
       </div> */}
-
-      
-<div>
-      <video ref={localVideoRef} autoPlay muted style={{ width: '300px', marginRight: '20px' }} />
-      <video ref={remoteVideoRef} autoPlay style={{ width: '300px' }} />
-      <button onClick={startScreenShare}>Share Screen</button>
+     <div>
+      <video ref={localVideoRef} autoPlay muted />
+      <video ref={remoteVideoRef} autoPlay />
+      <button onClick={startVideo}>Start Video</button>
+      <button onClick={callUser}>Call</button>
     </div>
+    
       
     </div>
   );

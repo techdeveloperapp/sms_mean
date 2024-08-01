@@ -6,6 +6,7 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const socketIo = require('socket.io');
+const helmet = require("helmet");
 dotenv.config();
 
 const ActivityRoutes = require("./routes/ActivityRoutes");
@@ -73,7 +74,7 @@ app.use(
 //middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/consumerPhotos"));
 app.use(express.static("./public"));
@@ -123,6 +124,10 @@ app.use("/api/sba", SBARoutes);
 app.use("/api/deductions", DeductionsRoutes);
 app.use("/api/nonbillpayment", NonPaymentRoutes);
 
+// app.use(helmet.cors({ allowFrom: ['http://localhost:3000'] }));
+
+// app.use(helmet());
+
 // This line is from the Node.js HTTPS documentation.
 var credentials = {
   key: fs.readFileSync('../../../ssl/keys/e69ba_b9fb7_c277ece9e6d52041cdf45a99f192a343.key'),
@@ -134,15 +139,29 @@ var httpsServer = https.createServer(credentials, app);
 
 
 // Socket
-const io = socketIo(httpsServer);
+const io = socketIo(httpsServer, {
+  cors: {
+    origin: "http://smserp.prekshaeyeyoga.com",
+    methods: ["GET", "POST"]
+  }
+});
 io.on('connection', (socket) => {
-  socket.on('signal', (data) => {
-    io.to(data.to).emit('signal', data);
+  console.log('New client connected');
+
+  socket.on('offer', (data) => {
+    socket.broadcast.emit('offer', data);
   });
 
-  socket.on('join', (room) => {
-    socket.join(room);
-    io.to(room).emit('joined', socket.id);
+  socket.on('answer', (data) => {
+    socket.broadcast.emit('answer', data);
+  });
+
+  socket.on('candidate', (data) => {
+    socket.broadcast.emit('candidate', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
   });
 });
 

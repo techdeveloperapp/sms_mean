@@ -141,7 +141,7 @@ var httpsServer = https.createServer(credentials, app);
 // Socket
 const io = socketIo(httpsServer, {
   cors: {
-    origin: "http://smserp.prekshaeyeyoga.com",
+    origin: "https://smserp.prekshaeyeyoga.com",
     methods: ["GET", "POST"]
   }
 });

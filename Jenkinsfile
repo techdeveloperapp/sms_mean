@@ -17,7 +17,7 @@ pipeline {
                     npm --version
                     npm config set legacy-peer-deps true
                     npm ci
-                    npm run build
+                    CI=false npm run build
                     ls -la
                 '''
             }

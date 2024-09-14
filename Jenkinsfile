@@ -31,6 +31,7 @@ pipeline {
             }
             steps {
                 sh '''
+                    cd frontend
                     npm test
                 '''
             }
